@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>漫遊台中｜城市一日遊</title>
+  <style>
+    :root {
+      --green: #55745f;
+      --green-dark: #3f5948;
+      --green-light: #e9efe9;
+      --cream: #f7f5ef;
+      --text: #334039;
+      --muted: #6f7972;
+      --white: #ffffff;
+      --shadow: 0 14px 35px rgba(45, 65, 52, .10);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      color: var(--text);
+      background: var(--cream);
+      line-height: 1.8;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* 導覽列 */
+    .nav {
+      position: fixed;
+      z-index: 20;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(92%, 1080px);
+      padding: 10px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,.82);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 999px;
+      box-shadow: 0 8px 25px rgba(40,55,45,.08);
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: .08em;
+      color: var(--green-dark);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: .9rem;
+      transition: .25s ease;
+    }
+
+    .nav-links a:hover {
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 92vh;
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(24,42,31,.58), rgba(24,42,31,.16)),
+        url("01.jpg") center/cover no-repeat;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, var(--cream) 0%, transparent 20%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      width: min(90%, 1000px);
+      color: var(--white);
+      padding-top: 70px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 5px 12px;
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 999px;
+      font-size: .85rem;
+      letter-spacing: .15em;
+      background: rgba(255,255,255,.08);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(3rem, 8vw, 6.8rem);
+      line-height: 1.05;
+      letter-spacing: .04em;
+      text-shadow: 0 5px 25px rgba(0,0,0,.22);
+    }
+
+    .hero p {
+      max-width: 580px;
+      margin: 24px 0 30px;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: rgba(255,255,255,.92);
+    }
+
+    .hero-btn {
+      display: inline-block;
+      padding: 11px 22px;
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--green-dark);
+      font-weight: 700;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .hero-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,.18);
+    }
+
+    /* 內容 */
+    .section {
+      width: min(92%, 1120px);
+      margin: auto;
+      padding: 90px 0;
+    }
+
+    .section-heading {
+      margin-bottom: 35px;
+    }
+
+    .section-heading span {
+      color: var(--green);
+      font-size: .85rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+    }
+
+    .section-heading h2 {
+      margin: 6px 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* 卡片 */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 26px;
+    }
+
+    .card {
+      overflow: hidden;
+      background: var(--white);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 18px 42px rgba(45,65,52,.15);
+    }
+
+    .card-image {
+      height: 270px;
+      overflow: hidden;
+      background: #dfe6df;
+    }
+
+    /* 圖片互動：滑鼠移入降低透明度，移出恢復 */
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 1;
+      transition: opacity .35s ease, transform .5s ease;
+    }
+
+    .card:hover .card-image img {
+      opacity: .72;
+      transform: scale(1.03);
+    }
+
+    .card-body {
+      padding: 24px 25px 26px;
+    }
+
+    .card-number {
+      color: var(--green);
+      font-size: .8rem;
+      font-weight: 800;
+      letter-spacing: .15em;
+    }
+
+    .card h3 {
+      margin: 5px 0 12px;
+      font-size: 1.55rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* 手風琴 */
+    .accordion {
+      margin-top: 18px;
+      border-top: 1px solid #dfe4df;
+    }
+
+    .accordion-item {
+      border-bottom: 1px solid #dfe4df;
+    }
+
+    .accordion-btn {
+      width: 100%;
+      border: 0;
+      padding: 18px 4px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font: inherit;
+      font-weight: 700;
+    }
+
+    .plus {
+      font-size: 1.5rem;
+      font-weight: 300;
+      transition: transform .25s ease;
+    }
+
+    .accordion-item.active .plus {
+      transform: rotate(45deg);
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .35s ease;
+      color: var(--muted);
+    }
+
+    .accordion-content p {
+      padding: 0 4px 18px;
+      margin: 0;
+    }
+
+    /* Footer */
+    footer {
+      padding: 45px 20px;
+      text-align: center;
+      background: #e9eee9;
+      color: #68736b;
+      font-size: .9rem;
+    }
+
+    @media (max-width: 760px) {
+      .nav {
+        top: 10px;
+        padding: 8px 12px;
+      }
+
+      .brand {
+        font-size: .9rem;
+      }
+
+      .nav-links a {
+        padding: 5px 7px;
+        font-size: .78rem;
+      }
+
+      .hero {
+        min-height: 82vh;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .card-image {
+        height: 240px;
+      }
+
+      .section {
+        padding: 65px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="nav">
+    <a class="brand" href="#top">漫遊台中</a>
+    <ul class="nav-links">
+      <li><a href="#spots">景點</a></li>
+      <li><a href="#about">關於行程</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="hero-content">
+      <span class="eyebrow">TAICHUNG · ONE DAY TRIP</span>
+      <h1>漫遊台中</h1>
+      <p>
+        從城市風景出發，走進老建築、文化空間、自然科學與熱鬧街區，
+        用一天的時間感受台中的不同樣貌。
+      </p>
+      <a class="hero-btn" href="#spots">探索四個景點 ↓</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" id="spots">
+      <div class="section-heading">
+        <span>FOUR DESTINATIONS</span>
+        <h2>台中，慢慢逛就很好</h2>
+        <p>四個景點，從人文、歷史到自然與城市生活，一次認識台中的不同風景。</p>
+      </div>
+
+      <div class="cards">
+
+        <!-- 審計新村 -->
+        <article class="card">
+          <div class="card-image">
+            <img src="02.jpg" alt="審計新村">
+          </div>
+          <div class="card-body">
+            <div class="card-number">01 / CULTURE</div>
+            <h3>審計新村</h3>
+            <p>老建築與青年創業交織出的文創聚落。</p>
+
+            <div class="accordion">
+              <div class="accordion-item">
+                <button class="accordion-btn" type="button">
+                  <span>景點介紹</span>
+                  <span class="plus">+</span>
+                </button>
+                <div class="accordion-content">
+                  <p>
+                    成功將「生活、生產、生態」的精神結合。遊客可以從附近的綠園道一路漫步過來，
+                    感受周邊豐富的藝術與人文氣息。走進村內，既能欣賞老建築的古樸韻味，
+                    也能在各具特色的文創商店中，看見青年創業家的活力。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 宮原眼科 -->
+        <article class="card">
+          <div class="card-image">
+            <img src="03.jpg" alt="宮原眼科">
+          </div>
+          <div class="card-body">
+            <div class="card-number">02 / HISTORY</div>
+            <h3>宮原眼科</h3>
+            <p>老建築重新轉化，讓歷史與現代文化創意共存。</p>
+
+            <div class="accordion">
+              <div class="accordion-item">
+                <button class="accordion-btn" type="button">
+                  <span>景點介紹</span>
+                  <span class="plus">+</span>
+                </button>
+                <div class="accordion-content">
+                  <p>
+                    早期是宮原武熊醫師開設的眼科診所。在「日出」經營團隊與專業建築修復人員的努力下，
+                    耗時一年多將這座老建築重新整修，轉型為充滿活力的文化創意空間。
+                    屋頂的透光玻璃讓室內光線自然充足，寬敞挑高的設計搭配大量的木製書架，
+                    營造出寧靜且質樸的閱讀氣息，讓來訪的人都能感受到老房子的新生命。
+                    這裡的伴手禮、點心與招牌冰淇淋也十分受歡迎。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 科博館 -->
+        <article class="card">
+          <div class="card-image">
+            <img src="04.jpg" alt="國立自然科學博物館">
+          </div>
+          <div class="card-body">
+            <div class="card-number">03 / SCIENCE</div>
+            <h3>科博館</h3>
+            <p>從太空、生命到人類文化，探索自然與科學。</p>
+
+            <div class="accordion">
+              <div class="accordion-item">
+                <button class="accordion-btn" type="button">
+                  <span>景點介紹</span>
+                  <span class="plus">+</span>
+                </button>
+                <div class="accordion-content">
+                  <p>
+                    國立自然科學博物館簡稱科博館，主要展示區分為六大區塊，
+                    包括：太空劇場、科學中心、生命科學廳、地球環境廳、人類文化廳、植物園等。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 逢甲商圈 -->
+        <article class="card">
+          <div class="card-image">
+            <img src="05.jpg" alt="逢甲商圈">
+          </div>
+          <div class="card-body">
+            <div class="card-number">04 / CITY LIFE</div>
+            <h3>逢甲商圈</h3>
+            <p>從學區發展而來的熱鬧夜間生活聚落。</p>
+
+            <div class="accordion">
+              <div class="accordion-item">
+                <button class="accordion-btn" type="button">
+                  <span>景點介紹</span>
+                  <span class="plus">+</span>
+                </button>
+                <div class="accordion-content">
+                  <p>
+                    逢甲觀光夜市鄰近逢甲大學、僑光技術學院等學區，夜市位於逢甲大學側門，
+                    從文華路一直延伸到福星路，消費族群以二、三十歲的年輕人為主。
+                    因其有著位於學區和接近市區的地緣關係，逐漸成為臺中市夜市集團的龍頭。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="section-heading">
+        <span>TAICHUNG</span>
+        <h2>一天，剛好認識一座城市</h2>
+        <p>
+          從審計新村的人文氣息，到宮原眼科的老建築新生命，
+          再走進科博館探索知識，最後在逢甲商圈感受城市夜晚。
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 漫遊台中｜Taichung One Day Trip
+  </footer>
+
+  <script>
+    // 手風琴互動：點擊後展開，再點一次收合
+    document.querySelectorAll(".accordion-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        const item = button.parentElement;
+        const content = item.querySelector(".accordion-content");
+
+        // 若想讓同一卡片只能開一個內容，可保留這段
+        const card = item.closest(".card");
+        card.querySelectorAll(".accordion-item.active").forEach(openItem => {
+          if (openItem !== item) {
+            openItem.classList.remove("active");
+            openItem.querySelector(".accordion-content").style.maxHeight = null;
+          }
+        });
+
+        item.classList.toggle("active");
+
+        if (item.classList.contains("active")) {
+          content.style.maxHeight = content.scrollHeight + "px";
+        } else {
+          content.style.maxHeight = null;
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
