@@ -81,6 +81,82 @@
       color: var(--green-dark);
     }
 
+    /* StoryMap 彈出視窗 */
+    .storymap-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(25, 35, 29, .68);
+    }
+
+    .storymap-modal.open {
+      display: flex;
+    }
+
+    .storymap-dialog {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: min(1200px, 100%);
+      height: min(850px, 92vh);
+      overflow: hidden;
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+    }
+
+    .storymap-dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 18px;
+      color: var(--green-dark);
+      background: var(--green-light);
+      font-weight: 800;
+    }
+
+    .storymap-close {
+      display: inline-grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--green-dark);
+      font-size: 1.6rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .storymap-close:hover {
+      background: rgba(85, 116, 95, .14);
+    }
+
+    .storymap-frame {
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      border: 0;
+      background: var(--cream);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    @media (max-width: 760px) {
+      .nav-links { gap: 2px; }
+      .nav-links a { padding: 5px 6px; font-size: .74rem; }
+      .storymap-modal { padding: 10px; }
+      .storymap-dialog { height: 94vh; border-radius: 14px; }
+    }
+
     /* Hero */
     .hero {
       min-height: 92vh;
@@ -337,6 +413,7 @@
     <ul class="nav-links">
       <li><a href="#spots">景點</a></li>
       <li><a href="#about">關於行程</a></li>
+      <li><a href="#storymap" id="openStoryMap">海線 StoryMap</a></li>
     </ul>
   </nav>
 
@@ -499,7 +576,55 @@
     © 2026 漫遊台中｜Taichung One Day Trip
   </footer>
 
+  <!-- 點選導覽列的「海線 StoryMap」後，於彈出視窗中顯示 StoryMap -->
+  <div class="storymap-modal" id="storyMapModal" role="dialog" aria-modal="true" aria-labelledby="storyMapTitle" aria-hidden="true">
+    <div class="storymap-dialog">
+      <div class="storymap-dialog-header">
+        <span id="storyMapTitle">台中海線一日遊 StoryMap</span>
+        <button class="storymap-close" id="closeStoryMap" type="button" aria-label="關閉 StoryMap">×</button>
+      </div>
+      <iframe
+        class="storymap-frame"
+        src="https://uploads.knightlab.com/storymapjs/6970c79705abd9f511a41f269c9298e6/tai-zhong-hai-xian-yi-ri-you/index.html"
+        title="台中海線一日遊 StoryMap"
+        allowfullscreen
+        loading="lazy">
+      </iframe>
+    </div>
+  </div>
+
   <script>
+    // StoryMap 彈出視窗：可用按鈕、點擊遮罩或 Escape 關閉
+    const storyMapModal = document.getElementById("storyMapModal");
+    const openStoryMap = document.getElementById("openStoryMap");
+    const closeStoryMap = document.getElementById("closeStoryMap");
+
+    function showStoryMap(event) {
+      if (event) event.preventDefault();
+      storyMapModal.classList.add("open");
+      storyMapModal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      closeStoryMap.focus();
+    }
+
+    function hideStoryMap() {
+      storyMapModal.classList.remove("open");
+      storyMapModal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      openStoryMap.focus();
+    }
+
+    openStoryMap.addEventListener("click", showStoryMap);
+    closeStoryMap.addEventListener("click", hideStoryMap);
+    storyMapModal.addEventListener("click", event => {
+      if (event.target === storyMapModal) hideStoryMap();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && storyMapModal.classList.contains("open")) {
+        hideStoryMap();
+      }
+    });
+
     // 手風琴互動：點擊後展開，再點一次收合
     document.querySelectorAll(".accordion-btn").forEach(button => {
       button.addEventListener("click", () => {
